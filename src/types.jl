@@ -15,13 +15,13 @@ abstract type TypstSpacing <: TypstSingle end
 abstract type TypstUnits <: AbstractTypst end
 abstract type TypstColors <: AbstractTypst end
 
-Option{T} = Union{T, Nothing}
+const Option{T} = Union{T, Nothing}
 
-ColorType = Option{Union{Symbol, Int}}
+const ColorType = Option{Union{Symbol, Int}}
 
-TypstVec = Vector{T} where {T <: AbstractTypst}
+const TypstVec = Vector{T} where {T <: AbstractTypst}
 
-TypstContent = Union{TypstElement, TypstVec, Tuple{TypstElement}}
+const TypstContent = Union{TypstElement, TypstVec, Tuple{TypstElement}}
 
 struct RelativeLength
 	value::Float64
@@ -52,23 +52,23 @@ fr(i::Int) = Fractional(i)
 
 fr(i::Int, n::Int) = repeat(fr(i), n)
 
-TypstLength = Option{Union{AbsoluteLength, RelativeLength, Real, Fractional}}
+const TypstLength = Option{Union{AbsoluteLength, RelativeLength, Real, Fractional}}
 
-FlexMeasures = Union{Fractional, AbsoluteLength}
+const FlexMeasures = Union{Fractional, AbsoluteLength}
 
-TypstStroke = Option{Union{TypstLength, Symbol, Dict{Symbol, Symbol}}}
+const TypstStroke = Option{Union{TypstLength, Symbol, Dict{Symbol, Symbol}}}
 
-Gutter = Union{TypstLength, Vector{FlexMeasures}}
+const Gutter = Union{TypstLength, Vector{FlexMeasures}}
 
-Flex = Option{Union{Vector{FlexMeasures}, Vector{Fractional}, Vector{AbsoluteLength}}}
+const Flex = Option{Union{Vector{FlexMeasures}, Vector{Fractional}, Vector{AbsoluteLength}}}
 
-Stringlike = Union{AbstractString, Symbol}
+const Stringlike = Union{AbstractString, Symbol}
 
-Numbering = Vector{Union{Stringlike, Int}}
+const Numbering = Vector{Union{Stringlike, Int}}
 
-Citations = Union{Stringlike, Vector{Stringlike}}
+const Citations = Union{Stringlike, Vector{Stringlike}}
 
-BaseOptions = Dict{Symbol, Any}
+const BaseOptions = Dict{Symbol, Any}
 
 
 opts(args...)::Dict{Symbol, Any} = d::Dict(args)
@@ -82,7 +82,7 @@ struct TypstBaseElement <: TypstElement
 	ref::Option{Symbol}
 end
 
-TypstElements = Union{AbstractTypst, Vector{AbstractTypst}, Vector{TypstBaseElement}}
+const TypstElements = Union{AbstractTypst, Vector{AbstractTypst}, Vector{TypstBaseElement}}
 
 struct TypstAngle <: TypstUnits
 	value::Float64
@@ -230,7 +230,7 @@ function allbutlabel(d::Dict{Symbol, T}) where T
 	return d
 end
 
-typedict = Dict(
+const typedict = Dict(
 	:TypstAlign => "align",
 	:TypstBlock => "block",
 	:TypstBibliography => "bibliography",
