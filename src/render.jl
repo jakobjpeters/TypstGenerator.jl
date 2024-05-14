@@ -3,9 +3,6 @@ struct TypstContext
 	indent::Int
 end
 
-import Base.+
-+(a::Symbol, b::Symbol) = string(a) * " + " * string(b)
-
 create_context(brackets::Bool, indent::Int = 0) = TypstContext(brackets, indent)
 
 hash(c::TypstContext) = c.brackets ? "#" : ""

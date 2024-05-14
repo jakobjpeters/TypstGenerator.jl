@@ -69,7 +69,7 @@ function gen_example()
 				enum([le..., enum(le, full = true, start = 4)]),
 			],
 			columns = fr(1, 4)),
-		background = place(rotate(text("WATERMARK", size = 6cm, font = "Source Sans Pro", fill = luma(0xcc)), deg(45)), :center + :horizon))
+		background = place(rotate(text("WATERMARK", size = 6cm, font = "Source Sans Pro", fill = luma(0xcc)), deg(45)), "center: horizon"))
 
 	page3 = page(
 		figure(

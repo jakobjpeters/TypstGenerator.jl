@@ -34,14 +34,12 @@ import Base.*
 import Base.+
 import Base.-
 import Base./
-import Base.%
 
 Base.zero(r::RelativeLength)    = RelativeLength(0)
 /(r::RelativeLength, n::Number) = r.value / n
 *(r::RelativeLength, n::Number) = r.value * n
 +(r::RelativeLength, n::Number) = r.value + n
 -(r::RelativeLength, n::Number) = r.value - n
-%(n::Real)                      = RelativeLength(n / 100)
 
 struct Fractional <: AbstractTypst
 	val::Int64
