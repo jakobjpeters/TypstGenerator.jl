@@ -1,3 +1,4 @@
+using Typstry: @typst_cmd
 using TypstGenerator
 
 function gen_example()
@@ -115,5 +116,5 @@ end
 
 function run_exmaple()
 	write("test.typ", gen_example() |> render_example)
-	run(`typst compile test.typ`)
+	run(typst`compile example/test.typ`)
 end

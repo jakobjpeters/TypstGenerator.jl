@@ -1,5 +1,7 @@
 module TypstGenerator
 
+import Typstry: show_typst
+
 using Measures
 
 include("types.jl")

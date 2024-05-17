@@ -5,41 +5,7 @@ end
 
 create_context(brackets::Bool, indent::Int = 0) = TypstContext(brackets, indent)
 
-hash(c::TypstContext) = c.brackets ? "#" : ""
-
-indent(c::TypstContext) = repeat("  ", c.indent)
-
-show(t::TypstContext) = indent(t) * hash(t)
-
-render(t::TypstContext) = indent(t) * hash(t)
-
-show(t::Bool) = "$(t)"
-
-show(t::AbsoluteLength)::String = "$(t.value)mm"
-
-show(t::RelativeLength)::String = "$(t.value * 100 |> round |> Int)%"
-
-show(t::Fractional)::String = "$(t.val)fr"
-
 render(t::TypstSpacing, context::TypstContext) = "$(render(context,t))($(getproperty(t, :spacing)))"
-
-render(i::Int) = i
-
-render(i::Float64) = "$(i * 100 |> round |> Int)%"
-
-render(i::AbsoluteLength) = i |> show
-
-render(i::Bool) = i |> show
-
-render(i::TypstLuma) = "luma($(i.value))"
-
-render(i::TypstCMYK) = "cmyk($(i.cyan |> render), $(i.magenta |> render), $(i.yellow |> render), $(i.key |> render))"
-
-render(i::TypstRGB) = "rgb($(i.r), $(i.g), $(i.b))"
-
-render(i::TypstAngle) = "$(i.value)deg"
-
-render(t::Flex)::String = isempty(t) ? "" : "($(join(show.(t), ", ")))"
 
 render(t::Pair{Symbol, Any}) = "$(replace(string(t[1]), "_" => "-")): $((t[2] |> typeof <: TypstElement) ? render(t[2], create_context(false)) : render(t[2]))"
 
@@ -49,15 +15,11 @@ render(t::Pair{Symbol, TypstVec}) = "$(t[1]): $(t[2] |> render)"
 
 render(t::Pair{Symbol, Union{AbstractString, Symbol}}) = """$(replace(string(t[1]), "_" => "-")): $(t[2] |> render)"""
 
-render(e::Union{AbstractString, Symbol}, context::TypstContext) = """\"$(e)\""""
-
-render(e::AbstractString) = """\"$(e)\""""
+render(e::Symbol, context::TypstContext) = """\"$(e)\""""
 
 render(e::Symbol) = "$(e)"
 
 render(e::NamedTuple) = "($(join(map(x -> "$(render(x[1])): $(render(x[2]))", e |> pairs |> collect), ", ")))"
-
-render(e::TypstLiteral, _) = e.string
 
 render(e::TypstNumbering, context::TypstContext) = """$(render(context,e))($(join(map(x -> typeof(x) <: AbstractString ? "\"$(x)\"" : "$(x)",  e.numbering), ", ")))"""
 
@@ -94,4 +56,55 @@ function render(e::Union{TypstBaseElement, TypstBaseControlls}, context::TypstCo
 	render(context, e.type) * (newcontext.brackets ?
 							   "($(render(e.options)))[$(render(e.content, newcontext))]" :
 							   "($(render(e.options, suffixif = ", "))$(typeof(e) == TypstBaseElement ? render(e.content, newcontext) : "")) ") * render(e.type, e.ref)
+end
+
+render(x::Union{
+	AbsoluteLength,
+	AbstractString,
+	Bool,
+	Flex,
+	Fractional,
+	Int,
+	RelativeLength,
+	TypstAngle,
+	TypstCMYK,
+	TypstContext,
+	TypstLiteral,
+	TypstLuma,
+	TypstRGB
+}) = sprint((io, x) -> show(io, MIME"text/plain"(), x), x)
+
+render(x::Union{
+	AbstractString
+}, context::TypstContext) = sprint((io, x) -> show(io, MIME"text/plain"(), x), x, ;
+	context = (:brackets => context.brackets, :depth => context.indent, :indent => "  ")
+)
+
+show_typst(io, t::AbsoluteLength) = print(io, t.value, "mm")
+
+show_typst(io, t::Flex) = if !isempty(t) join(io, render.(t), ", ") end
+
+show_typst(io, t::Fractional) = print(io, t.val, "fr")
+
+show_typst(io, t::RelativeLength) = print(io, t.value * 100 |> round |> Int)
+
+show_typst(io, i::TypstAngle) = print(io, i.value, "deg")
+
+function show_typst(io, i::TypstCMYK)
+	print(io, "cmyk(")
+	join(io, map(render ∘ RelativeLength, [i.cyan, i.magenta, i.yellow, i.key]), ", ")
+	print(io, ")")
+end
+
+show_typst(io, t::TypstContext) =
+	print(io, io[:indent]::String ^ io[:depth]::Int, io[:brackets]::Bool ? "#" : "")
+
+show_typst(io, e::TypstLiteral) = print(io, e.string)
+
+show_typst(io, i::TypstLuma) = print(io, "luma(", i.value, ")")
+
+function show_typst(io, i::TypstRGB)
+	print(io, "rbg(")
+	join(io, [i.r, i.g, i.b], ", ")
+	print(io, ")")
 end
