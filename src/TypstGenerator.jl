@@ -1,6 +1,7 @@
 module TypstGenerator
 
 import Typstry: show_typst
+using Typstry: Typst, code
 
 using Measures
 

@@ -5,7 +5,8 @@ function gen_example()
 
 	le = text.(split("Lorem ipsum dolor sit amet", " "))
 
-	pathbase = endswith(pwd(), "example") ? "" : "example/"
+	# pathbase = endswith(pwd(), "example") ? "" : "example/"
+	pathbase = (@__DIR__) * "/"
 
 	julia_svg = pathbase * "julia.svg"
 	typst_png = pathbase * "typst_banner.png"
@@ -116,5 +117,5 @@ end
 
 function run_exmaple()
 	write("test.typ", gen_example() |> render_example)
-	run(typst`compile example/test.typ`)
+	run(typst`compile test.typ`)
 end

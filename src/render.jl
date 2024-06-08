@@ -72,13 +72,15 @@ render(x::Union{
 	TypstLiteral,
 	TypstLuma,
 	TypstRGB
-}) = sprint((io, x) -> show(io, MIME"text/plain"(), x), x)
+}) = sprint((io, x) -> show(io, MIME"text/typst"(), x), Typst(x))
 
-render(x::Union{
-	AbstractString
-}, context::TypstContext) = sprint((io, x) -> show(io, MIME"text/plain"(), x), x, ;
-	context = (:brackets => context.brackets, :depth => context.indent, :indent => "  ")
-)
+render(x::AbstractString, context::TypstContext) =
+	sprint((io, x) -> show(io, MIME"text/typst"(), Typst(x)), x;
+		context = (:brackets => context.brackets, :depth => context.indent, :indent => "  "))
+
+render(x::TypstContext) =
+	sprint((io, x) -> show(io, MIME"text/typst"(), Typst(x)), x;
+		context = (:brackets => x.brackets, :depth => x.indent, :indent => "  "))
 
 show_typst(io, t::AbsoluteLength) = print(io, t.value, "mm")
 
