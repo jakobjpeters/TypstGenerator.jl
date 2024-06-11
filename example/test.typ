@@ -22,7 +22,7 @@ doc
   #heading(level: 2, "Important Topic") 
   #lorem(200)
   #set align(center)]
-#page(background: place(center + horizon,  rotate(45.0deg,    text(font: "Source Sans Pro", fill: luma(204), size: 60.0mm, "WATERMARK") )))[
+#page(background: place(horizon,  rotate(45.0deg,    text(font: "Source Sans Pro", fill: luma(204), size: 60.0mm, "WATERMARK") )))[
   #grid(columns: (1fr, 1fr, 1fr, 1fr, 1fr, 1fr, 1fr, 1fr, 1fr, 1fr, 1fr, 1fr, 1fr, 1fr, 1fr, 1fr, 1fr, 1fr), 
     rotate(1.0deg,      square(fill: rgb(33, 3, 100), size: 20.0mm,         align(bottom, $ A =  pi r^2 $)) ),
     rotate(6.0deg,      square(fill: rgb(33, 18, 100), size: 20.0mm,         align(bottom, $ A =  pi r^2 $)) ),
@@ -100,7 +100,7 @@ $A = pi ^2$
       square(size: 42.0mm, ) ) ) <uncle_ted>
   #set par(justify: true)
   #lorem(100)
-  #cite("netwok2020")
+  #cite(<netwok2020>)
   #lorem(50)
   #ref(<uncle_ted>)
   #lorem(50)

@@ -7,6 +7,8 @@ create_context(brackets::Bool, indent::Int = 0) = TypstContext(brackets, indent)
 
 render(t::TypstSpacing, context::TypstContext) = "$(render(context,t))($(getproperty(t, :spacing)))"
 
+render(t::Bool) = string(t)
+
 render(t::Pair{Symbol, Any}) = "$(replace(string(t[1]), "_" => "-")): $((t[2] |> typeof <: TypstElement) ? render(t[2], create_context(false)) : render(t[2]))"
 
 render(t::Pair{Symbol, TypstElement}) = "$(t[1]): $(t[2] |> render)"
@@ -37,7 +39,7 @@ render(t::TypstColumns, context::TypstContext) = "$(render(context,t))($(t.num)$
 
 render(e::BaseOptions; prefixif = "", suffixif = "") = isempty(e) ? "" : "$(prefixif)$(join(e |> collect .|> render, ", "))$(suffixif)"
 
-render(e::TypstCite, context::TypstContext) = "$(render(context,e))($(join(map(ref -> "\"$(ref)\"", e.refs), ", "))$(render(e.options, prefixif = ", ")))"
+render(e::TypstCite, context::TypstContext) = "$(render(context,e))($(join(map(ref -> "<$(ref)>", e.refs), ", "))$(render(e.options, prefixif = ", ")))"
 
 render(e::TypstPlace, context::TypstContext) = "$(render(context,e))($(e.alignment),$(render(e.options, suffixif = ", "))$(render(e.content, create_context(false, context.indent + 1))))"
 
@@ -61,7 +63,6 @@ end
 render(x::Union{
 	AbsoluteLength,
 	AbstractString,
-	Bool,
 	Flex,
 	Fractional,
 	Int,
@@ -84,11 +85,11 @@ render(x::TypstContext) =
 
 show_typst(io, t::AbsoluteLength) = print(io, t.value, "mm")
 
-show_typst(io, t::Flex) = if !isempty(t) join(io, render.(t), ", ") end
+show_typst(io, t::Flex) = if !isempty(t); print(io, "(" * join(render.(t), ", ") * ")") end
 
 show_typst(io, t::Fractional) = print(io, t.val, "fr")
 
-show_typst(io, t::RelativeLength) = print(io, t.value * 100 |> round |> Int)
+show_typst(io, t::RelativeLength) = print(io, t.value * 100 |> round |> Int, "%")
 
 show_typst(io, i::TypstAngle) = print(io, i.value, "deg")
 
@@ -106,7 +107,7 @@ show_typst(io, e::TypstLiteral) = print(io, e.string)
 show_typst(io, i::TypstLuma) = print(io, "luma(", i.value, ")")
 
 function show_typst(io, i::TypstRGB)
-	print(io, "rbg(")
+	print(io, "rgb(")
 	join(io, [i.r, i.g, i.b], ", ")
 	print(io, ")")
 end

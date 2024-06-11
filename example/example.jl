@@ -1,16 +1,13 @@
-using Typstry: @typst_cmd
+using Typstry: TypstCommand
 using TypstGenerator
 
 function gen_example()
 
 	le = text.(split("Lorem ipsum dolor sit amet", " "))
 
-	# pathbase = endswith(pwd(), "example") ? "" : "example/"
-	pathbase = (@__DIR__) * "/"
-
-	julia_svg = pathbase * "julia.svg"
-	typst_png = pathbase * "typst_banner.png"
-	bib = pathbase * "bibliography.bib"
+	julia_svg = "julia.svg"
+	typst_png = "typst_banner.png"
+	bib = "bibliography.bib"
 
 	page1 = page(
 		outline(),
@@ -71,7 +68,7 @@ function gen_example()
 				enum([le..., enum(le, full = true, start = 4)]),
 			],
 			columns = fr(1, 4)),
-		background = place(rotate(text("WATERMARK", size = 6cm, font = "Source Sans Pro", fill = luma(0xcc)), deg(45)), "center: horizon"))
+		background = place(rotate(text("WATERMARK", size = 6cm, font = "Source Sans Pro", fill = luma(0xcc)), deg(45)), "horizon"))
 
 	page3 = page(
 		figure(
@@ -115,7 +112,8 @@ function render_example(t)
 	typst(t, title = "Report", authors = ["Author"])
 end
 
-function run_exmaple()
-	write("test.typ", gen_example() |> render_example)
-	run(typst`compile test.typ`)
+function run_exmaple(root)
+	path = joinpath(root, "test.typ")
+	write(path, gen_example() |> render_example)
+	run(TypstCommand(["compile", "--root=" * root, path]))
 end
